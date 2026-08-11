@@ -1,0 +1,60 @@
+<style>
+  {{CUSTOM_CSS}}
+</style>
+
+<div class="plot-container-wrapper">
+    <div class="ctrl-group left">
+        <span class="ctrl-label">음량</span>
+        <input id="vol" class="ctrl-range" type="range" min="0" max="100" value="80" />
+        <span id="vol_val" class="ctrl-value">80%</span>
+    </div>
+
+    <div class="plot-content">
+        {plot_html}
+    </div>
+
+    <div class="ctrl-group right">
+        <span class="ctrl-label">속도</span>
+        <input id="rate" class="ctrl-range" type="range" min="50" max="200" value="100" step="5" />
+        <span id="rate_val" class="ctrl-value">1.00x</span>
+    </div>
+</div>
+
+<div class="custom-audio-player">
+    <span id="currentTime">0:00</span>
+    <div class="progress-container" id="progressContainer">
+        <div class="range-highlight" id="rangeHighlight"></div>
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+</div>
+
+<div id="audio-panel">
+    <h3 style="margin-top:0;">오디오 파일</h3>
+    <div class="time-caption">선택된 지점: <span id="sel_t">0.00</span>초</div>
+
+    <div class="button-row">
+        <button id="main_toggle_btn" class="toggle-play-btn paused">
+            <span id="toggle_icon">▶</span> <span id="toggle_text">재생</span>
+        </button>
+    </div>
+
+    <div class="button-row">
+        <button id="btn_audio_a" class="audio-ctrl-btn">기준 음원</button>
+        <button id="btn_audio_b" class="audio-ctrl-btn active">학생 음원</button>
+        <button id="btn_audio_stereo" class="audio-ctrl-btn">스테레오</button>
+    </div>
+
+    <div>
+        <span>두 연주를 동시에 재생하며 비교해 보세요. </span>
+    </div>
+    <div>
+        <span>⚠️ 스테레오 음원은 정확한 비교를 위해 반드시 <b>이어폰이나 헤드셋</b>을 착용해 주세요. (왼쪽: 기준 | 오른쪽: 사용자)</span>
+    </div>
+    <audio id="audio_a" style="display:none;" preload="auto"></audio>
+    <audio id="audio_b" style="display:none;" preload="auto"></audio>
+    <audio id="audio_stereo" style="display:none;" preload="auto"></audio>
+</div>
+
+<script>
+  {{CUSTOM_JS}}
+</script>

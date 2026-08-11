@@ -1,0 +1,5 @@
+__pycache__/
+*.pyc
+
+# Raw input videos excluded due to size (see README)
+analyze/input/*.mp4
