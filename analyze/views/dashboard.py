@@ -155,6 +155,26 @@ if "active_student" not in st.session_state:
 if "selected_time" not in st.session_state:
     st.session_state["selected_time"] = {}
 
+# --- [2-1. 데모용 샘플 데이터 자동 로드] ---
+# 배포 환경에는 원본 영상이 없으므로, 저장소에 포함된 샘플 분석 결과를
+# 첫 접속 시 자동으로 불러와서 별도 업로드 없이 바로 결과를 볼 수 있게 한다.
+if "sample_autoloaded" not in st.session_state:
+    st.session_state["sample_autoloaded"] = True
+    if not st.session_state["uploaded_data"]:
+        sample_path = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            "student_analysis.json",
+        )
+        if os.path.exists(sample_path):
+            try:
+                with open(sample_path, "r", encoding="utf-8") as f:
+                    sample_data = json.load(f)
+                sample_name = "샘플 학생 (student_analysis.json)"
+                st.session_state["uploaded_data"] = {sample_name: sample_data}
+                st.session_state["active_student"] = sample_name
+            except Exception:
+                pass
+
 # --- [3. 사이드바 구성] ---
 with st.sidebar:
     st.header("👨‍🏫 선생님 기준 음원")

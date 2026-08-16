@@ -164,6 +164,13 @@ def run_parallel_analysis(bin_a, bin_b):
 # --- [3. UI 구성 및 메인 로직] ---
 st.title("🎶 플루트 연주 구간별 통합 분석 대시보드")
 
+if not (os.path.exists(VIDEO_P3) and os.path.exists(VIDEO_USER)):
+    st.info(
+        "🎥 이 배포 환경에는 용량 문제로 원본 비교 영상이 포함되어 있지 않습니다.\n\n"
+        "분석 결과 데모는 왼쪽 메뉴의 **Dashboard** 페이지에서 확인하실 수 있습니다."
+    )
+    st.stop()
+
 if st.button("🚀 구간별 정밀 분석 시작"):
     start_time = time.time() # 전체 분석 시작 시간 측정
     with st.spinner("데이터 분석 중..."):

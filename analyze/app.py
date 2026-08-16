@@ -3,16 +3,16 @@ import streamlit as st
 # 1. 페이지 객체 생성
 # views 폴더 안에 있는 파일들을 연결합니다.
 main_page = st.Page(
-    "views/main_view.py", 
-    title="Main", 
-    icon="🏠", 
-    default=True
+    "views/main_view.py",
+    title="Main",
+    icon="🏠"
 )
 
 dashboard_page = st.Page(
-    "views/dashboard.py", 
-    title="Dashboard", 
-    icon="📊"
+    "views/dashboard.py",
+    title="Dashboard",
+    icon="📊",
+    default=True
 )
 
 
