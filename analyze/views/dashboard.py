@@ -562,16 +562,3 @@ else:
         audio_uri_stereo = to_data_uri(d['audio_bin_stereo'])
         
         st_time_select(plot_html, audio_uri_a, audio_uri_b, audio_uri_stereo)
-
-
-    with st.expander("영상 파일", expanded=True):
-    # 1행 2열 구조를 위한 컬럼 생성
-        v_col1, v_col2 = st.columns(2)
-        
-        with v_col1:
-            st.caption("선생님 기준 영상")
-            st.video(d['video_a_url'])
-            
-        with v_col2:
-            st.caption("학생 영상")
-            st.video(d['video_b_url'])
