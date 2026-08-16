@@ -21,6 +21,8 @@
 
 ## 데모
 
+**🔗 라이브 데모: [boomclassproject.streamlit.app](https://boomclassproject-tbvxriteyahakhhn5wkamg.streamlit.app/)** — Dashboard 페이지는 샘플 데이터가 자동으로 로드되어 바로 결과를 확인할 수 있습니다. (Main 분석 페이지는 원본 영상 미포함으로 데모에서 비활성화)
+
 `analyze/student_analysis.json` 샘플 데이터를 Dashboard 페이지에 업로드했을 때의 실제 실행 화면입니다.
 
 ![대시보드 개요 - 종합 점수, 음정/강약/박자 점수, 통합 그래프](docs/screenshots/dashboard_overview.png)
@@ -37,8 +39,7 @@
 - **음정/강약 추출**: `librosa`의 pYIN 알고리즘으로 음정(MIDI pitch)을, RMS로 강약(다이내믹)을 프레임 단위로 추출합니다.
 - **DTW 시간 정렬**: 두 연주의 템포가 달라도 Dynamic Time Warping으로 프레임을 정렬해 같은 음을 서로 비교합니다.
 - **정량 채점**: 음정(40%) · 강약(20%) · 박자(40%) 가중치로 종합 점수를 계산합니다.
-- **인터랙티브 그래프**: Plotly 기반 통합 그래프에서 음정/강약/박자를 켜고 끌 수 있고, 그래프를 클릭하면 해당 지점의 오디오가 바로 재생됩니다. `Shift + 드래그`로 구간을 선택하면 A-B 구간 반복 재생도 가능합니다.
-- **교정 구간 자동 탐지**: 5초 단위 구간 중 오차가 기준치를 넘는 구간을 자동으로 표로 뽑아주고, 클릭하면 해당 구간만 확대한 상세 그래프와 음원을 보여줍니다.
+- **인터랙티브 그래프**: Plotly 기반 통합 그래프에서 음정/강약/박자를 켜고 끌 수 있고, 그래프를 클릭하면 해당 지점의 오디오가 바로 재생됩니다. 그래프를 드래그해서 구간을 선택하면 A-B 구간 반복 재생도 가능합니다.
 - **결과 저장/재열람**: 분석 결과를 JSON으로 다운로드해두면, 다시 분석을 돌리지 않고도 대시보드에 업로드해서 즉시 재열람할 수 있습니다.
 
 ## 기술 스택
@@ -53,20 +54,7 @@
 
 ## 아키텍처 / 처리 파이프라인
 
-```mermaid
-%%{init: {"themeVariables": {"fontSize": "24px"}, "flowchart": {"nodeSpacing": 30, "rankSpacing": 55, "wrappingWidth": 260}} }%%
-flowchart LR
-    A["`🎥 영상 입력
-    기준 + 학생 .mp4`"] --> B["`🔊 오디오 추출·동기화
-    ffmpeg + pydub`"]
-    B --> C["`🎼 피치·강약 추출
-    librosa pYIN + RMS`"]
-    C --> D["`⏱️ DTW 시간 정렬`"]
-    D --> E["`✅ 정확도 채점
-    음정·강약·박자`"]
-    E --> F["`📊 시각화
-    Plotly + Streamlit`"]
-```
+![아키텍처 다이어그램 - Streamlit App 내부의 파이프라인 단계별 모듈과 외부 프로세스/라이브러리 연동](docs/architecture.png)
 
 세부 파일/함수 단위 흐름은 아래와 같습니다.
 
@@ -87,7 +75,7 @@ flowchart LR
 |---|---|---|
 | **병렬 처리** | `ProcessPoolExecutor`로 기준/학생 두 음원의 특징 추출을 동시에 실행해 분석 시간 단축 | `main_view.py` → `run_parallel_analysis` |
 | **외부 프로세스 관리** | `subprocess.Popen`으로 `ffmpeg`를 호출하고, 결과를 디스크에 파일로 쓰지 않고 `stdout` 파이프(`pipe:1`)로 바로 스트리밍 처리 · 종료 코드(`returncode`) 체크 후 예외 처리 | `audioprocess.py` → `generate_processed_audio_bin` |
-| **성능/정확도 트레이드오프 튜닝** | 분석용 샘플링레이트를 44.1kHz → 16kHz로 낮추고 `hop_length`를 조정해 데이터 포인트와 연산량을 절반 이상 절감 | `main_view.py` → `analyze_features_core` |
+| **성능/정확도 트레이드오프 튜닝** | 분석용 샘플링레이트를 44.1kHz → 16kHz로 낮추고 `hop_length`를 조정해 연산량 절감. 전체 분석 소요시간 155.97초 → 31.54초(약 80% 단축)로 측정됐고, 원본(44.1kHz) 대비 음정 분석 결과는 상관계수 0.97로 유지됨을 별도 실험으로 검증 | `main_view.py` → `analyze_features_core` |
 | **예외적 입력값 처리** | `ffmpeg`의 `atempo` 필터가 0.5~2.0배속만 지원하는 제약을, 배속이 그 범위를 벗어나면 필터를 체이닝하는 방식으로 우회 | `audioprocess.py` → `get_atempo_filter` |
 | **재연산 방지 캐싱** | `@st.cache_data`로 동일 입력에 대한 중복 분석을 방지 | `main_view.py` → `run_parallel_analysis` |
 | **재현 가능한 실행 환경** | `requirements.txt` + 설치/실행 가이드로 동일한 분석 환경을 다른 머신에서도 그대로 재현 가능하도록 문서화 | `requirements.txt`, 본 문서 |
@@ -109,7 +97,9 @@ BoomClass_Project/
 │   └── static/
 │       ├── main_view/            # 선생님/학생 영상 동시 재생 위젯 (YouTube API 기반)
 │       └── dashboard/            # 통합 그래프 + 커스텀 오디오 플레이어 컴포넌트
-├── docs/screenshots/              # README 데모 스크린샷
+├── docs/
+│   ├── architecture.png           # 아키텍처 다이어그램
+│   └── screenshots/                # README 데모 스크린샷
 ├── requirements.txt
 └── README.md
 ```
@@ -154,7 +144,7 @@ streamlit run app.py
 1. 사이드바에서 JSON 파일을 업로드합니다. (`analyze/student_analysis.json` 샘플로 바로 확인 가능)
 2. 학생 목록에서 이름을 선택합니다.
 3. 통합 그래프에서 음정/강약/박자를 켜고 끄며 비교하고, 그래프를 클릭해 원하는 지점의 소리를 들어봅니다.
-4. **🚩 교정 필요 구간** 표에서 구간을 선택하면 해당 구간만 확대한 상세 그래프와 음원이 나타납니다.
+4. 그래프를 드래그해서 구간을 선택하면 그 구간만 확대되고, 해당 구간이 반복 재생됩니다.
 
 ## 데모 자료 더 만들기
 
@@ -167,4 +157,4 @@ streamlit run app.py
    - Windows: [ScreenToGif](https://www.screentogif.com/) (무료, 녹화 후 바로 GIF로 저장 가능)
 5. `docs/screenshots/` 폴더에 이미지를 추가하고, 이 README의 [데모](#데모) 섹션에 경로를 연결
 
-더 적극적으로 보여주고 싶다면 [Streamlit Community Cloud](https://streamlit.io/cloud)에 무료로 배포해서 실제 동작하는 링크를 README에 추가하는 방법도 있습니다. 다만 이 경우 `ffmpeg` 시스템 패키지를 `packages.txt`로 별도 지정해야 하고, 원본 영상 없이는 Main(분석) 페이지가 정상 동작하지 않으므로 Dashboard 페이지 위주로 데모하는 것을 추천합니다.
+[Streamlit Community Cloud](https://streamlit.io/cloud)에 실제로 배포해서 위 [데모](#데모) 링크로 공개해뒀습니다. `ffmpeg`는 `packages.txt`로 시스템 패키지를 지정했고, `requirements.txt`에는 로컬에서 검증한 버전을 정확히 pin해서 배포 환경과 로컬 환경이 어긋나지 않도록 했습니다. 원본 영상은 포함돼 있지 않아 Main(분석) 페이지는 안내 문구만 표시되고, Dashboard 페이지가 샘플 데이터로 데모의 중심 역할을 합니다.
