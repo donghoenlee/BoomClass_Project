@@ -75,7 +75,7 @@
 |---|---|---|
 | **병렬 처리** | `ProcessPoolExecutor`로 기준/학생 두 음원의 특징 추출을 동시에 실행해 분석 시간 단축 | `main_view.py` → `run_parallel_analysis` |
 | **외부 프로세스 관리** | `subprocess.Popen`으로 `ffmpeg`를 호출하고, 결과를 디스크에 파일로 쓰지 않고 `stdout` 파이프(`pipe:1`)로 바로 스트리밍 처리 · 종료 코드(`returncode`) 체크 후 예외 처리 | `audioprocess.py` → `generate_processed_audio_bin` |
-| **성능/정확도 트레이드오프 튜닝** | 분석용 샘플링레이트를 44.1kHz → 16kHz로 낮추고 `hop_length`를 조정해 연산량 절감. 전체 분석 소요시간 155.97초 → 31.54초(약 80% 단축)로 측정됐고, 원본(44.1kHz) 대비 음정 분석 결과는 상관계수 0.97로 유지됨을 별도 실험으로 검증 | `main_view.py` → `analyze_features_core` |
+| **성능/정확도 트레이드오프 튜닝** | 분석용 샘플링레이트를 44.1kHz → 16kHz로 낮추고 `hop_length`를 조정해 연산량 절감. 전체 분석 소요시간 155.97초 → 36.70초(약 76.5% 단축)로 측정됐고, 원본(44.1kHz) 대비 음정 분석 결과는 상관계수 0.97로 유지됨을 별도 실험으로 검증 | `main_view.py` → `analyze_features_core` |
 | **예외적 입력값 처리** | `ffmpeg`의 `atempo` 필터가 0.5~2.0배속만 지원하는 제약을, 배속이 그 범위를 벗어나면 필터를 체이닝하는 방식으로 우회 | `audioprocess.py` → `get_atempo_filter` |
 | **재연산 방지 캐싱** | `@st.cache_data`로 동일 입력에 대한 중복 분석을 방지 | `main_view.py` → `run_parallel_analysis` |
 | **재현 가능한 실행 환경** | `requirements.txt` + 설치/실행 가이드로 동일한 분석 환경을 다른 머신에서도 그대로 재현 가능하도록 문서화 | `requirements.txt`, 본 문서 |
