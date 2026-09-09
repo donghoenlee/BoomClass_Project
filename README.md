@@ -157,4 +157,4 @@ streamlit run app.py
    - Windows: [ScreenToGif](https://www.screentogif.com/) (무료, 녹화 후 바로 GIF로 저장 가능)
 5. `docs/screenshots/` 폴더에 이미지를 추가하고, 이 README의 [데모](#데모) 섹션에 경로를 연결
 
-[Streamlit Community Cloud](https://streamlit.io/cloud)에 실제로 배포해서 위 [데모](#데모) 링크로 공개해뒀습니다. 배포 환경에는 원본 영상이 없어 Main(분석) 페이지는 안내 문구만 표시되고 `ffmpeg`도 쓰이지 않으므로, `packages.txt`(ffmpeg 시스템 패키지 지정) 없이 배포합니다 — 이 파일이 트리거하는 `apt-get` 설치 단계를 아예 건너뛰어 Cloud 쪽 Debian 저장소 이슈에 영향받지 않도록 한 것입니다. `requirements.txt`는 여러 Python 버전에서 두루 설치 가능한 버전으로 pin해 재현성을 확보했습니다. Dashboard 페이지가 샘플 데이터로 데모의 중심 역할을 합니다.
+[Streamlit Community Cloud](https://streamlit.io/cloud)에 실제로 배포해서 위 [데모](#데모) 링크로 공개해뒀습니다. 배포 환경에는 원본 영상이 없어 Main(분석) 페이지는 안내 문구만 표시되고 `ffmpeg`도 쓰이지 않으므로, `packages.txt`(ffmpeg 시스템 패키지 지정) 없이 배포합니다 — 이 파일이 트리거하는 `apt-get` 설치 단계를 아예 건너뛰어 Cloud 쪽 Debian 저장소 이슈에 영향받지 않도록 한 것입니다. `requirements.txt`는 배포 환경(Python 3.14)에서 실제로 설치·검증한 버전으로 pin해 재현성을 확보했습니다. Dashboard 페이지가 샘플 데이터로 데모의 중심 역할을 합니다.
