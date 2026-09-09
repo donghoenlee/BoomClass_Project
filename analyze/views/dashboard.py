@@ -6,12 +6,7 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 import plotly.io as pio
-import matplotlib.pyplot as plt
 import base64
-
-# --- [1. 환경 설정 및 폰트] ---
-plt.rcParams['font.family'] = 'Malgun Gothic'
-plt.rcParams['axes.unicode_minus'] = False
 
 # CSS: 스타일링 업데이트
 st.markdown("""

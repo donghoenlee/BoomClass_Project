@@ -6,7 +6,6 @@ import librosa
 import numpy as np
 from scipy.signal import medfilt, windows
 from scipy.ndimage import convolve1d
-import matplotlib.pyplot as plt
 import pandas as pd
 
 from pathlib import Path
@@ -24,9 +23,6 @@ import time  # 시간 측정용
 from concurrent.futures import ProcessPoolExecutor # 병렬 처리용
 
 # --- [1. 환경 설정 및 경로] ---
-plt.rcParams['font.family'] = 'Malgun Gothic'
-plt.rcParams['axes.unicode_minus'] = False
-
 VIDEO_P3 = "./input/flute_comp_1_a.mp4"
 VIDEO_P3_URL = "https://youtu.be/v9FI5QF0YaM"
 
